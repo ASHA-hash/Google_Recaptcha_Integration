@@ -1,0 +1,22 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $secretKey = "YOUR_SECRET_KEY";
+    $captchaResponse = $_POST['g-recaptcha-response'];
+
+    // Send the verification request to Google
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$captchaResponse");
+    $responseKeys = json_decode($response, true);
+
+    // Check if the reCAPTCHA was successful
+    if (intval($responseKeys["success"]) !== 1) {
+        echo "Please complete the CAPTCHA.";
+    } else {
+        // Process the form data
+        $name = htmlspecialchars($_POST['name']);
+        $email = htmlspecialchars($_POST['email']);
+        echo "Thank you, $name. Your email $email has been submitted successfully!";
+    }
+} else {
+    echo "Invalid request.";
+}
+?>
